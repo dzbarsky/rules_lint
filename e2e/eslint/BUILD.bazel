@@ -1,4 +1,4 @@
-load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@aspect_rules_js//js:defs.bzl", "js_binary", "js_library")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 load("@npm//:eslint/package_json.bzl", eslint_bin = "bin")
 
@@ -8,11 +8,22 @@ npm_link_all_packages(name = "node_modules")
 
 eslint_bin.eslint_binary(name = "eslint")
 
+# This binary can probably be macroed or generated as part of the aspect.
+js_binary(
+    name = "eslint_wrapper",
+    data = [":eslint"],
+    # This wrapper script is actually linter-agnostic.
+    entry_point = "wrapper.mjs",
+    env = {
+        "ESLINT_PATH": "$(rlocationpath :eslint)",
+    },
+)
+
 js_library(
     name = "eslintrc",
     srcs = [".eslintrc.cjs"],
     deps = [
-      ":node_modules/@typescript-eslint/eslint-plugin",
-      ":node_modules/@typescript-eslint/parser",
+        ":node_modules/@typescript-eslint/eslint-plugin",
+        ":node_modules/@typescript-eslint/parser",
     ],
 )

@@ -3,6 +3,6 @@
 load("@aspect_rules_lint//lint:eslint.bzl", "eslint_aspect")
 
 eslint = eslint_aspect(
-    binary = "@@//:eslint",
+    binary = "@@//:eslint_wrapper",
     config = "@@//:eslintrc",
 )
